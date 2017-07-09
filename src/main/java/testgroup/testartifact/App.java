@@ -15,7 +15,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!!" );
+        System.out.println( "Hello World!!!" );
         
         String serverIP = "127.0.0.1";
         String keyspace = "example";
