@@ -25,16 +25,17 @@ public class App
         		.build();
         Session session = cluster.connect(keyspace);
         
-        String cqlStatement = "SELECT json * FROM users;";
+        String cqlStatement = "SELECT json * FROM testdata limit 10;";
         
         // read all entries from users table
-        //for(Row row : session.execute(cqlStatement)) {
-        //	System.out.println(row.toString());
-        //}
+        for(Row row : session.execute(cqlStatement)) {
+        	System.out.println(row.toString());
+        }
+        
         
         
         long starttime = System.nanoTime();
-        
+        /*
         // add new users
         for(int i = 1; i <= 10000; i++) {
 	        String cqlInsertStatement = "INSERT INTO users (id, name) "
@@ -42,6 +43,7 @@ public class App
 	
 	        session.execute(cqlInsertStatement);
         }
+        */
         long endtime = System.nanoTime();
         System.out.println("Duration (ms): "+ (endtime-starttime)/1000000);
         
