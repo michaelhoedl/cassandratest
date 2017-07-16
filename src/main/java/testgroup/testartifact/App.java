@@ -24,22 +24,28 @@ public class App
     public static void main( String[] args ) throws InterruptedException
     {
         System.out.println( "Hello World!!!" );
+        long starttime;
+        long endtime;
         
-        String serverIP = "127.0.0.1";
-        String keyspace = "example";
+        String serverIP = "10.0.0.5";//"127.0.0.1";  // achtung: die IP Adressen können sich immer wieder mal ändern...
+        String keyspace = "tests";//"example";
         
         Cluster cluster = Cluster.builder()
         		.addContactPoint(serverIP)
+        		//.addContactPoint("10.0.0.6")
         		.build();
         Session session = cluster.connect(keyspace);
         
         
 
-        
+        /*
         String cqlStatement = "SELECT * FROM testdata limit 10;";
         
+        starttime = System.nanoTime();
         // read all entries from users table
         for(Row row : session.execute(cqlStatement)) {
+        	System.out.println(row.toString());
+        	
         	System.out.println(row.getString("txt"));
         	
         	Map<String,String> themap = row.getMap("something", String.class, String.class);
@@ -47,7 +53,9 @@ public class App
         	System.out.println("a="+themap.get("a"));
         	System.out.println("b="+themap.get("b"));
         }
-        
+        endtime = System.nanoTime();
+        System.out.println("Duration SELECT (ms): "+ (endtime-starttime)/1000000);
+        */
         
         /*
         
@@ -67,7 +75,8 @@ public class App
         */
         
         
-        long starttime = System.nanoTime();
+        /*
+        starttime = System.nanoTime();
         PreparedStatement prep = session.prepare("INSERT INTO users (id, name) VALUES (?, ?)");
         for(int i = 1; i <= 1000; i++) {
 	        BoundStatement bound = new BoundStatement(prep);
@@ -75,15 +84,32 @@ public class App
 	        session.executeAsync(bound);
         }
         
-        long endtime = System.nanoTime();
-        System.out.println("Duration (ms): "+ (endtime-starttime)/1000000);
+        endtime = System.nanoTime();
+        System.out.println("Duration INSERT (ms): "+ (endtime-starttime)/1000000);
+        */
         
+        
+        starttime = System.nanoTime();
+        PreparedStatement prep = session.prepare("INSERT INTO test (testid, testname, testnum) VALUES (?, ?, ?)");
+        for(int i = 1; i <= 1011; i++) {
+	        BoundStatement bound = new BoundStatement(prep);
+	        bound.bind("test"+i+"", "name"+i+"", i);
+	        session.executeAsync(bound);
+        }
+        
+        endtime = System.nanoTime();
+        System.out.println("Duration INSERT (ms): "+ (endtime-starttime)/1000000);
+        
+        
+        
+        String cqlStatement = "SELECT * FROM test;";
+        int x = 0;
         // read all entries from users table
-       // for(Row row : session.execute(cqlStatement)) {
-       // 	System.out.println(row.toString());
-       // }
+        for(Row row : session.execute(cqlStatement)) {
+        	x += 1;
+        }
         
-        
+        System.out.println("anz="+x);
 
         
         System.out.println("Done");
