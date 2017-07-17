@@ -27,12 +27,12 @@ public class App
         long starttime;
         long endtime;
         
-        String serverIP = "10.0.0.5";//"127.0.0.1";  // achtung: die IP Adressen können sich immer wieder mal ändern...
+        String serverIP = "10.0.0.10";//"127.0.0.1";  // achtung: die IP Adressen können sich immer wieder mal ändern...
         String keyspace = "tests";//"example";
         
         Cluster cluster = Cluster.builder()
         		.addContactPoint(serverIP)
-        		//.addContactPoint("10.0.0.6")
+        		.addContactPoint("10.0.0.9")
         		.build();
         Session session = cluster.connect(keyspace);
         
