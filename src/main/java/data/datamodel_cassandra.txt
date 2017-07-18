@@ -1,1 +1,19 @@
-test
+
+
+/*user-defined type of product.
+see: https://www.youtube.com/watch?v=le_c5PhYUhY
+*/
+/*
+CREATE TYPE productdata (
+    
+);
+*/
+
+
+/*not complete yet...to be continued...*/
+CREATE TABLE orders (
+  username text,
+  orderid int,
+  productid int,
+  PRIMARY KEY ((username, orderid), productid)
+);
