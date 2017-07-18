@@ -14,6 +14,8 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.Statement;
 import com.google.common.base.Stopwatch;
 
+import utils.ConnectionHelperCassandra;
+
 
 /**
  * Hello world!
@@ -26,15 +28,11 @@ public class App
         System.out.println( "Hello World!!!" );
         long starttime;
         long endtime;
+
+
+        Session session = ConnectionHelperCassandra.getDBConnection();
         
-        String serverIP = "10.0.0.10";//"127.0.0.1";  // achtung: die IP Adressen können sich immer wieder mal ändern...
-        String keyspace = "tests";//"example";
         
-        Cluster cluster = Cluster.builder()
-        		.addContactPoint(serverIP)
-        		.addContactPoint("10.0.0.9")
-        		.build();
-        Session session = cluster.connect(keyspace);
         
         
 
@@ -114,7 +112,8 @@ public class App
         
         System.out.println("Done");
         session.close();
-        cluster.close();
+        session.getCluster().close();
+        
         System.exit(0);
         
     }
