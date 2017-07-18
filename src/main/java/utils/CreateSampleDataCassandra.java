@@ -8,6 +8,10 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Random;
 
+import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.Session;
+
 import model.Creditcard;
 import model.Orderline;
 import model.Orders;
@@ -36,6 +40,16 @@ public class CreateSampleDataCassandra {
 		csdc.fillOrderline();
 		
 		System.out.println("size="+csdc.orderlinelist.size());
+		
+		//Write to DB:
+		
+		Session session = ConnectionHelperCassandra.getDBConnection();
+		csdc.writeOrdersToCassandra(session);
+		
+	     System.out.println("Done");
+	     session.close();
+	     session.getCluster().close();
+	     System.exit(0);
 	
 	}
 	
@@ -237,5 +251,34 @@ public class CreateSampleDataCassandra {
 	
 	
 	// ---------------------------------------------------------------------------
+	
+	
+	/**
+	 * Write Orders into Cassandra DB
+	 */
+	private void writeOrdersToCassandra(Session session) {
+		long starttime;
+		long endtime;
+		starttime = System.nanoTime();
+		
+        PreparedStatement prep = session.prepare("INSERT INTO orders (username, orderid, productid) VALUES (?, ?, ?) IF NOT EXISTS");
+
+		for (Orderline o1 : orderlinelist) {
+			String username = o1.getOrder().getUser().getUsername();
+			int orderid = o1.getOrder().getOrder_id();
+			int productid = o1.getProduct().getProduct_id();
+			
+			BoundStatement bound = new BoundStatement(prep);
+	        bound.bind(username, orderid, productid);
+	        session.executeAsync(bound);
+			
+		}
+		endtime = System.nanoTime();
+		System.out.println("Duration of writeOrdersToCassandra (ms): "+(endtime-starttime)/1000000);
+		
+	}
+	
+	
+	
 	
 }
