@@ -89,7 +89,7 @@ public class App
         
         starttime = System.nanoTime();
         PreparedStatement prep = session.prepare("INSERT INTO test (testid, testname, testnum) VALUES (?, ?, ?)");
-        for(int i = 1; i <= 1011; i++) {
+        for(int i = 1; i <= 3011; i++) {
 	        BoundStatement bound = new BoundStatement(prep);
 	        bound.bind("test"+i+"", "name"+i+"", i);
 	        session.executeAsync(bound);
