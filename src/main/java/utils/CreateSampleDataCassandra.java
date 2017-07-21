@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -261,15 +262,17 @@ public class CreateSampleDataCassandra {
 		long endtime;
 		starttime = System.nanoTime();
 		
-        PreparedStatement prep = session.prepare("INSERT INTO orders (username, orderid, productid) VALUES (?, ?, ?) IF NOT EXISTS");
+        PreparedStatement prep = session.prepare("INSERT INTO orders (username, orderid, orderdate, productid, amount) VALUES (?, ?, ?, ?, ?) IF NOT EXISTS");
 
 		for (Orderline o1 : orderlinelist) {
 			String username = o1.getOrder().getUser().getUsername();
 			int orderid = o1.getOrder().getOrder_id();
 			int productid = o1.getProduct().getProduct_id();
-			
+			float amount = o1.getAmount();
+			Date orderdate = o1.getOrder().getOrder_date();
+						
 			BoundStatement bound = new BoundStatement(prep);
-	        bound.bind(username, orderid, productid);
+	        bound.bind(username, orderid, com.datastax.driver.core.LocalDate.fromMillisSinceEpoch(orderdate.getTime()) , productid, amount);
 	        session.executeAsync(bound);
 			
 		}
@@ -277,6 +280,7 @@ public class CreateSampleDataCassandra {
 		System.out.println("Duration of writeOrdersToCassandra (ms): "+(endtime-starttime)/1000000);
 		
 	}
+	
 	
 	
 	

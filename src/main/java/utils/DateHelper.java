@@ -17,4 +17,9 @@ public final class DateHelper {
 	public static Date getCurrentTimeStampAsDate() {
 		return new java.util.Date();
 	}
+	
+	
+	public static String getMyTimeStampAsString(Date d) {
+		return dateFormat.format(d.getTime());
+	}
 }
