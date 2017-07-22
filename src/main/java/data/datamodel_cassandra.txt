@@ -19,3 +19,15 @@ CREATE TABLE orders (
   amount float,
   PRIMARY KEY ((username, orderid, orderdate), productid)
 );
+
+
+/*only for testing the db performance*/
+CREATE TABLE orderline (
+  orderlineid int,
+  username text,
+  orderid int,
+  orderdate date,
+  productid int,
+  amount float,
+  PRIMARY KEY (orderlineid, username, orderid, productid, orderdate)
+);

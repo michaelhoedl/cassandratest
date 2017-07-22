@@ -45,7 +45,8 @@ public class CreateSampleDataCassandra {
 		//Write to DB:
 		
 		Session session = ConnectionHelperCassandra.getDBConnection();
-		csdc.writeOrdersToCassandra(session);
+		//csdc.writeOrdersToCassandra(session);
+		csdc.writeOrderlinesToCassandra(session);
 		
 	     System.out.println("Done");
 	     session.close();
@@ -217,7 +218,7 @@ public class CreateSampleDataCassandra {
 	
 
 	/**
-	 * Fill the ArrayList with 5000000 sample Orderline Objects
+	 * Fill the ArrayList with 10000000 sample Orderline Objects
 	 */
 	private void fillOrderline() {
 		long starttime;
@@ -231,7 +232,7 @@ public class CreateSampleDataCassandra {
 		
 		Orderline o1;
 		
-		for(int i = 1; i <= 5000000; i++) {
+		for(int i = 1; i <= 10000000; i++) {
 			o = orderlist.get(randy.nextInt(100000));
 			p = productlist.get(randy.nextInt(1000000));
 			
@@ -278,6 +279,37 @@ public class CreateSampleDataCassandra {
 		}
 		endtime = System.nanoTime();
 		System.out.println("Duration of writeOrdersToCassandra (ms): "+(endtime-starttime)/1000000);
+		
+	}
+	
+	
+
+	/**
+	 * Write Orders into Cassandra DB
+	 */
+	private void writeOrderlinesToCassandra(Session session) {
+		long starttime;
+		long endtime;
+		starttime = System.nanoTime();
+		
+        PreparedStatement prep = session.prepare("INSERT INTO orderline (orderlineid, username, orderid, orderdate, productid, amount) "
+        		+ "VALUES (?, ?, ?, ?, ?, ?) ");
+
+		for (Orderline o1 : orderlinelist) {
+			String username = o1.getOrder().getUser().getUsername();
+			int orderid = o1.getOrder().getOrder_id();
+			int productid = o1.getProduct().getProduct_id();
+			float amount = o1.getAmount();
+			Date orderdate = o1.getOrder().getOrder_date();
+			int orderlineid = o1.getOrderline_id();
+						
+			BoundStatement bound = new BoundStatement(prep);
+	        bound.bind(orderlineid, username, orderid, com.datastax.driver.core.LocalDate.fromMillisSinceEpoch(orderdate.getTime()) , productid, amount);
+	        session.executeAsync(bound);
+			
+		}
+		endtime = System.nanoTime();
+		System.out.println("Duration of writeOrderlinesToCassandra (ms): "+(endtime-starttime)/1000000);
 		
 	}
 	

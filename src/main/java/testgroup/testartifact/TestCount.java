@@ -16,12 +16,14 @@ public class TestCount {
 
 		Session session = ConnectionHelperCassandra.getDBConnection();
 
-	    String cqlStatement = "SELECT * FROM tests.orders";
+	    //String cqlStatement = "SELECT * FROM tests.orders";
+		String cqlStatement = "SELECT * FROM tests.orderline";
 	    int x = 0;
 	    // read all entries from users table
 	    for(Row row : session.execute(cqlStatement)) {
 	    	x += 1;
 	    }
+	    
 	    
 	    System.out.println("anz="+x);
 	    

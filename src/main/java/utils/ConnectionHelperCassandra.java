@@ -7,7 +7,7 @@ public final class ConnectionHelperCassandra {
 	
 	public static Session getDBConnection() {
         String serverIP = "10.0.0.10";//"127.0.0.1";  // achtung: die IP Adressen können sich immer wieder mal ändern...
-        String serverIP2 = "10.0.0.11";
+        String serverIP2 = "10.0.0.8";
         String keyspace = "tests";//"example";
         
         Cluster cluster = Cluster.builder()
