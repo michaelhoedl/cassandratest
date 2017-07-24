@@ -283,7 +283,7 @@ public class CreateSampleDataCassandra {
 		Orderline o1;
 		int i = 1;
 				
-		while(orderlinelist.size() <= 5000000) {
+		while(i <= 5000000/*orderlinelist.size() < 5000*/) {
 			o = orderlist.get(randy.nextInt(100000));
 			p = productlist.get(randy.nextInt(1000000));
 			
@@ -311,19 +311,30 @@ public class CreateSampleDataCassandra {
 		long endtime;
 		starttime = System.nanoTime();
 		
-        PreparedStatement prep = session.prepare("INSERT INTO orders (username, orderid, orderdate, productid, amount) VALUES (?, ?, ?, ?, ?) IF NOT EXISTS");
-
+        PreparedStatement prep = session.prepare("INSERT INTO orders (username, orderid, orderdate, productid, amount, prod_cat) VALUES (?, ?, ?, ?, ?, ?) "
+        		//+ "IF NOT EXISTS" 
+        		+ "");
+        BoundStatement bound = null;
+        
+		String username = null;
+		int orderid = 0;
+		int productid = 0;
+		float amount = 0;
+		Date orderdate = null;
+        
 		for (Orderline o1 : orderlinelist) {
-			String username = o1.getOrder().getUser().getUsername();
-			int orderid = o1.getOrder().getOrder_id();
-			int productid = o1.getProduct().getProduct_id();
-			float amount = o1.getAmount();
-			Date orderdate = o1.getOrder().getOrder_date();
+			username = o1.getOrder().getUser().getUsername();
+			orderid = o1.getOrder().getOrder_id();
+			orderdate = o1.getOrder().getOrder_date();
+			productid = o1.getProduct().getProduct_id();
+			amount = o1.getAmount();
 						
-			BoundStatement bound = new BoundStatement(prep);
-	        bound.bind(username, orderid, com.datastax.driver.core.LocalDate.fromMillisSinceEpoch(orderdate.getTime()) , productid, amount);
+			bound = new BoundStatement(prep);
+	        bound.bind(username, orderid, 
+	        		com.datastax.driver.core.LocalDate.fromMillisSinceEpoch(orderdate.getTime()) , 
+	        		productid, amount,
+	        		o1.getProduct().getCategories());
 	        session.executeAsync(bound);
-			
 		}
 		endtime = System.nanoTime();
 		System.out.println("Duration of writeOrdersToCassandra (ms): "+(endtime-starttime)/1000000);
