@@ -1,5 +1,7 @@
 package model;
 
+import java.util.HashSet;
+
 public class Product {
 	
 	private int product_id;
@@ -7,6 +9,7 @@ public class Product {
 	private String product_description;
 	private float price;
 	private float in_stock;
+	private HashSet<String> categories;
 	
 	public Product(int product_id, String product_name, String product_description, float price, float in_stock) {
 		super();
@@ -48,6 +51,12 @@ public class Product {
 		this.in_stock = in_stock;
 	}
 	
-	
+	public HashSet<String> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(HashSet<String> categories) {
+		this.categories = categories;
+	}
 
 }

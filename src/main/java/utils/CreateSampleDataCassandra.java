@@ -38,15 +38,16 @@ public class CreateSampleDataCassandra {
 		csdc.fillProducts();
 		csdc.fillShopusers();
 		csdc.fillOrders();
-		csdc.fillOrderline();
+		//csdc.fillOrderline();
+		csdc.fillOrderline2();
 		
 		System.out.println("size="+csdc.orderlinelist.size());
 		
 		//Write to DB:
 		
 		Session session = ConnectionHelperCassandra.getDBConnection();
-		//csdc.writeOrdersToCassandra(session);
-		csdc.writeOrderlinesToCassandra(session);
+		csdc.writeOrdersToCassandra(session);
+		//csdc.writeOrderlinesToCassandra(session);
 		
 	     System.out.println("Done");
 	     session.close();
@@ -127,12 +128,26 @@ public class CreateSampleDataCassandra {
 		Product p1;
 		for (int i = 1; i <= 1000000; i++) {
 			p1 = new Product(i, "Product"+i, "The best Product!", randy.nextFloat()*randy.nextInt(1000), randy.nextFloat()*randy.nextInt(500));
+			fillProducts2Categories(p1);
 			productlist.add(p1);
 		}
 		endtime = System.nanoTime();
 		System.out.println("Duration of fillProducts (ms): "+(endtime-starttime)/1000000);
 		
 	}
+	
+	/**
+	 * Fill some sample Categories into the Products
+	 */
+	private void fillProducts2Categories(Product p) {
+		Random randy = new Random();
+		HashSet<String> cats = new HashSet<String>();
+		//set up to 10 categories for the product
+		for(int j = 1; j <= randy.nextInt(9)+1; j++) {
+			cats.add("category"+j);
+		}
+		p.setCategories(cats);	
+}
 	
 	/**
 	 * Fill the ArrayList with 10000 sample Shopuser Objects
@@ -248,6 +263,39 @@ public class CreateSampleDataCassandra {
 		
 		endtime = System.nanoTime();
 		System.out.println("Duration of fillOrderline (ms): "+(endtime-starttime)/1000000);
+		
+	}
+	
+
+	/**
+	 * Alternative: Fill the ArrayList with 5000000 sample Orderline Objects
+	 */
+	private void fillOrderline2() {
+		long starttime;
+		long endtime;
+		starttime = System.nanoTime();
+		
+		Random randy = new Random();
+
+		Product p;
+		Orders o;
+		
+		Orderline o1;
+		int i = 1;
+				
+		while(orderlinelist.size() <= 5000000) {
+			o = orderlist.get(randy.nextInt(100000));
+			p = productlist.get(randy.nextInt(1000000));
+			
+			
+			o1 = new Orderline(i, o, p);
+			o1.setAmount(randy.nextFloat()+randy.nextInt(1000));
+			orderlinelist.add(o1);
+			i++;
+		}
+		
+		endtime = System.nanoTime();
+		System.out.println("Duration of fillOrderline2 (ms): "+(endtime-starttime)/1000000);
 		
 	}
 	

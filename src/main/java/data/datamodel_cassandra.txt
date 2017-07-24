@@ -17,6 +17,7 @@ CREATE TABLE orders (
   orderdate date,
   productid int,
   amount float,
+  prod_cat set<text>, 
   PRIMARY KEY ((username, orderid, orderdate), productid)
 );
 
@@ -29,5 +30,6 @@ CREATE TABLE orderline (
   orderdate date,
   productid int,
   amount float,
+  prod_cat set<text>, 
   PRIMARY KEY (orderlineid, username, orderid, productid, orderdate)
 );
